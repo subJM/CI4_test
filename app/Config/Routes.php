@@ -16,6 +16,7 @@ $routes->group('admin', static function (RouteCollection $routes) {
     $routes->get('profile', 'AdminController::profile', ['as' => 'admin.profile']);
     $routes->post('update-personal-details','AdminController::updatePersonalDetails', ['as'=> 'update-personal-details']);
     $routes->post('update-profile-picture', 'AdminController::updateProfilePicture', ['as'=>'update-profile-picture']);
+    $routes->post('change-password', 'AdminController::changePassword' ,  ['as'=> 'change-password']);
   });
   $routes->group('', ['filter' => 'cifilter:guest'], static function (RouteCollection $routes) {
     // $routes->view('example-auth','example-auth');

@@ -88,7 +88,35 @@
                         <!-- Tasks Tab start -->
                         <div class="tab-pane fade" id="change_password" role="tabpanel">
                             <div class="pd-20 profile-task-wrap">
-                                ---- Change password ----
+                                <form action="<?= route_to('change-password');?>" method="POST" id="change_password_form">
+                                    <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash(); ?>" class="ci_csrf_data">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="">Current password</label>
+                                                <input type="password" class="form-control" placeholder="Enter current password" name="current_password">
+                                                <span class="text-danger error-text current_password_error"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="">New password</label>
+                                                <input type="password" class="form-control" placeholder="Enter new password" name="new_password">
+                                                <span class="text-danger error-text new_password_error"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="">Confirm new password</label>
+                                                <input type="password" class="form-control" placeholder="Retype new password" name="new_password">
+                                                <span class="text-danger error-text confirm_password_error"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary">Change password</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                         <!-- Tasks Tab End -->
@@ -155,5 +183,11 @@
             alert(message);
           }
       });   
+
+      //Change password
+      $('#change_password_form').on('submit',function(e){
+        e.preventDefault();
+        alert('submit');
+      });
 </script>
 <?= $this->endSection()?>
