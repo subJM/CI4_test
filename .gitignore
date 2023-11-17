@@ -126,3 +126,7 @@ nb-configuration.xml
 /phpunit*.xml
 /.phpunit.*.cache
 
+
+#유저 이미지 사진 보관안함
+/public/images/users/*
+/public/image/users/*
