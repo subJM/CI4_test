@@ -1,9 +1,9 @@
 <div class="left-side-bar">
-			<div class="brand-logo">
-				<a href="index.html">
-					<img src="/backend/vendors/images/deskapp-logo.svg" alt="" class="dark-logo" />
+			<div class="brand-logo" style="padding:5px;">
+				<a href="/">
+					<img src="/images/blog/<?= get_settings()->blog_logo?>" alt="" class="dark-logo"  />
 					<img
-						src="/backend/vendors/images/deskapp-logo-white.svg"
+						src="/images/blog/<?= get_settings()->blog_logo?>"
 						alt=""
 						class="light-logo"
 					/>
@@ -22,7 +22,7 @@
 							</a>
 						</li>
 						<li>
-							<a href="" class="dropdown-toggle no-arrow">
+							<a href="<?= route_to('categories') ?>" class="dropdown-toggle no-arrow">
 								<span class="micon dw dw-list"></span
 								><span class="mtext">Categories</span>
 							</a>
@@ -59,12 +59,12 @@
 						</li>
 						<li>
 							<a
-								href=""
+								href="<?= route_to('settings')?>"
 								class="dropdown-toggle no-arrow"
 							>
 								<span class="micon dw dw-settings"></span>
 								<span class="mtext">
-									General
+									settings
 									<!-- <img src="/backend/vendors/images/coming-soon.png" alt="" width="25" -->
 								</span>
 							</a>

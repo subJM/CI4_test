@@ -5,7 +5,7 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'Home::index');
+$routes->get('/', 'AdminController::index');
 
 $routes->group('admin', static function (RouteCollection $routes) {
 
@@ -17,6 +17,12 @@ $routes->group('admin', static function (RouteCollection $routes) {
     $routes->post('update-personal-details','AdminController::updatePersonalDetails', ['as'=> 'update-personal-details']);
     $routes->post('update-profile-picture', 'AdminController::updateProfilePicture', ['as'=>'update-profile-picture']);
     $routes->post('change-password', 'AdminController::changePassword' ,  ['as'=> 'change-password']);
+    $routes->get('settings' , 'AdminController::settings' , [ 'as' => 'settings']);
+    $routes->post('update-general-settings', 'AdminController::updateGeneralSettings' , ['as'=>'update-general-settings']);
+    $routes->post('update-blog-logo', 'AdminController::updateBlogLogo' , ['as'=> 'update-blog-logo']);
+    $routes->post('update-blog-favicon','AdminController::updateBlogFavicon', ['as'=> 'update-blog-favicon']);
+    $routes->post('update-social-media', 'AdminController::updateSocialMedia' , ['as'=> 'update-social-media']);
+    $routes->get('categories', 'AdminController::categories', ['as'=> 'categories']);
   });
   $routes->group('', ['filter' => 'cifilter:guest'], static function (RouteCollection $routes) {
     // $routes->view('example-auth','example-auth');

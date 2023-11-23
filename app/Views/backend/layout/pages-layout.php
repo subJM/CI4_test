@@ -56,7 +56,8 @@
 	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 	</head>
 	<body>
-		<div class="pre-loader">
+		<!-- 로딩창 -->
+		<!-- <div class="pre-loader">
 			<div class="pre-loader-box">
 				<div class="loader-logo">
 					<img src="/backend/vendors/images/deskapp-logo.svg" alt="" />
@@ -67,7 +68,7 @@
 				<div class="percent" id="percent1">0%</div>
 				<div class="loading-text">Loading...</div>
 			</div>
-		</div>
+		</div> -->
 
 		<?php include 'inc/header.php'?>
 

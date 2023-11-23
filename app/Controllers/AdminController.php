@@ -5,6 +5,9 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use App\Libraries\CIAuth;
 use App\Models\User;
+use App\Libraries\Hash;
+use App\Models\Setting;
+use App\Models\SocialMedia;
 
 class AdminController extends BaseController
 {
@@ -117,6 +120,235 @@ class AdminController extends BaseController
             echo json_encode(['status'=> 0 , 'msg'=> 'Something went wrong.']);
         }
 
+    }
+
+    public function changePassword(){
+        $request = \Config\Services::request();
+        
+        if( $request->isAJAX() ){
+            $validation = \Config\Services::validation();
+            $user_id = CIAuth::id();
+            $user = new User();
+            $user_info = $user->asObject()->where('id', $user_id)->first();
+
+            $this->validate([
+                'current_password' =>[
+                    'rules' => 'required|min_length[5]|check_current_password[current_password]',
+                    'errors' => [
+                        'required' => 'Enter current password',
+                        'min_length' => 'Password must have atleast 5 charaters',
+                        'check_current_password' => 'The current password is incorrect',
+                    ],
+                ],
+                'new_password'=>[
+                    'rules' => 'required|min_length[5]|max_length[20]|is_password_strong[new_password]',
+                    'errors' => [
+                        'required' => 'New password is required',
+                        'min_length' => 'New password must have atleast 5 characters',
+                        'max_length' => 'New password must not excess more than 20 characters',
+                        'is_password_strong' =>'Password must contains atleast 1 upppercase, 1 lowercase, 1 number and 1 special character',
+                    ],
+                ],
+                'confirm_new_password'=>[
+                    'rules' => 'required|matches[new_password]',
+                    'errors' => [
+                        'required' => 'Confirm new pasword',
+                        'matches'=> 'Password mismatch',
+                    ],
+                ],
+            ]);
+            if($validation->run() === FALSE){
+                $errors = $validation->getErrors();
+                return $this->response->setJSON(['status' =>0, 'token'=> csrf_hash(), 'error'=>$errors]);
+            }else{
+                //Update user(admin) password in DB
+
+                $user->where('id', $user_id)->set(['password' => Hash::make($request->getVar('new_password') )])->update();
+                
+                //Send Email notification to user(admin) email address
+                $mail_data = array(
+                    'user' => $user_info,
+                    'new_password' => $request->getVar('new_password'),
+                );
+
+                $view = \Config\Services::renderer();
+                $mail_body = $view->setVar('mail_data',$mail_data)->render('email-templates/password-changed-email-template');
+
+                $mailConfig = array(
+                    'mail_from_email' =>env('EMAIL_FROM_ADDRESS'),
+                    'mail_from_name'    =>env('EMAIL_FROM_NAME'),
+                    'mail_recipient_email'  => $user_info->email,
+                    'mail_recipient_name'   => $user_info->name,
+                    'mail_subject'          => 'Password Changed',
+                    'mail_body'             => $mail_body,
+                );
+
+                sendEmail($mailConfig);
+
+                return $this->response->setJSON(['status'=>1 ,'token'=>csrf_hash(),'msg'=>'Done! Your password has been successfully updated']);
+            }
+        }
+
+    }
+
+    public function settings(){
+        $data =[
+            'pageTitle'=>'Setting'
+        ];
+        return view('backend/pages/settings', $data);
+    }
+
+    public function updateGeneralSettings(){
+        $request = \Config\Services::request();
+        if($request->isAJAX()){
+            $validation = \Config\Services::validation();
+            $this->validate([
+                'blog_title'=>[
+                    'rules'=>'required',
+                    'errors'=>[
+                        'required'=> 'Blog title is required'
+                    ],
+                ],
+                'blog_email'=>
+                    [
+                        'rules' => 'required|valid_email',
+                        'errors'=> [
+                            'required'=>'Blog email is required',
+                            'valid_email'=>'Invalid email address',
+                        ]
+                ]
+            ]);
+
+            if($validation->run() === FALSE){
+                $errors = $validation->getErrors();
+                return $this->response->setJSON(['status'=>0, 'token'=>csrf_hash(),'error'=>$errors]);
+            }else{
+                $settings = new Setting();
+                $setting_id = $settings->asObject()->first()->id;
+                $update = $settings->where('id',$setting_id)->set([
+                    'blog_title'=>$request->getVar('blog_title'),
+                    'blog_email'=>$request->getVar('blog_email'),
+                    'blog_phone'=>$request->getVar('blog_phone'),
+                    'blog_meta_keywords'=>$request->getVar('blog_meta_keywords'),
+                    'blog_meta_description'=>$request->getVar('blog_meta_description'),
+                ])->update();
+
+                if($update){
+                    return $this->response->setJSON(['status'=>1 ,'token'=> csrf_hash(), 'msg' => 'General settings have been updated successfully.']);
+                }else{
+                    return $this->response->setJSON(['status'=>0 ,'token'=> csrf_hash(), 'msg' => 'Something went wrong']);
+                }
+
+            }
+        }
+    }
+
+    public function updateBlogLogo(){
+        $request = \Config\Services::request();
+        
+        if($request->isAJAX()){
+            $setting = new Setting();
+            $path = 'images/blog';
+            $file = $request->getFile('blog_logo');
+            $setting_data = $setting->asObject()->first();
+            $old_blog_logo = $setting_data->blog_logo;
+            $new_filename = 'CI4blog_logo'.$file->getRandomName();
+
+            if($file->move($path,$new_filename)){
+                if($old_blog_logo != null && file_exists($path, $old_blog_logo)){
+                    unlink($path, $old_blog_logo);
+                }
+                $update = $setting->where('id',$setting_data->id)->set([
+                    'blog_logo'=> $new_filename,
+                ])->update();
+                
+                if($update){
+                    return $this->response->setJSON(['status'=> 1, 'token'=>csrf_hash(), 'msg'=>'Done!, CI4Blog logo has been successfully update.']);
+                }else{
+                    return $this->response->setJSON(['status'=>0,'token'=>csrf_hash(),'msg'=>'Something went wrong on updating new logo info']);
+                }
+            }else{
+                return $this->response->setJSON(['status'=>0,'token'=>csrf_hash(),'msg'=>'Something went wrong on updating new logo info']);
+            }
+        }
+    }
+
+    public function updateSocialMedia(){
+        $request = \Config\Services::request();
+
+        if($request->isAJAX()){
+            $validation = \Config\Services::validation();
+            $this->validate([
+                'facebook_url'=>[
+                    'rules'=>'permit_empty|valid_url_strict',
+                    'errors'=> [
+                        'valid_url_strict'=> 'Invalid facebook page URL',
+                    ]
+                ],
+                'twitter_url'=>[
+                    'rules'=>'permit_empty|valid_url_strict',
+                    'errors'=>[
+                        'valid_url_strict'=> 'Invalid twitter page URL',
+                    ]
+                ],
+                'instagram_url'=>[
+                    'rules'=>'permit_empty|valid_url_strict',
+                    'errors'=>[
+                        'valid_url_strict'=> 'Invalid instagram page URL',
+                    ]
+                ],
+                'youtube_url'=>[
+                    'rules'=>'permit_empty|valid_url_strict',
+                    'errors'=>[
+                        'valid_url_strict'=> 'Invalid youtube page URL',
+                    ]
+                ],
+                'github_url'=>[
+                    'rules'=>'permit_empty|valid_url_strict',
+                    'errors'=>[
+                        'valid_url_strict'=> 'Invalid GitHub page URL',
+                    ]
+                ],
+                'linkedin_url'=>[
+                    'rules'=>'permit_empty|valid_url_strict',
+                    'errors'=>[
+                        'valid_url_strict'=> 'Invalid twitter page URL',
+                    ]
+                ],
+            ]);
+
+            if($validation->run() === false){
+                $errors = $validation->getErrors();
+                return $this->response->setJSON(['status'=>0, 'token'=> csrf_hash(), 'error'=>$errors]);
+            }else{
+                $social_media = new SocialMedia();
+                $social_media_id = $social_media->asObject()->first()->id;
+                $update = $social_media->where('id', $social_media_id)->set([
+                    'facebook_url'=>$request->getVar('facebook_url'),
+                    'twitter_url'=>$request->getVar('twitter_url'),
+                    'instagram_url'=>$request->getVar('instagram_url'),
+                    'youtube_url'=>$request->getVar('youtube_url'),
+                    'github_url'=>$request->getVar('github_url'),
+                    'linkedin_url'=>$request->getVar('linkedin_url'),
+                ])->update();
+
+                if($update){
+                    return $this->response->setJSON(['status'=>1 , 'token'=> csrf_hash(), 'msg'=> 'Done!, Blog social media have been successfully updated']);
+                }else{
+                    return $this->response->setJSON(['status'=>0 , 'token'=> csrf_hash(), 'msg'=> 'Something went wrong on updating blog social media']);
+                }
+                
+            }
+
+        }
+
+    }
+
+    public function categories(){
+        $data = [
+            'pageTitle' => 'Categories'
+        ];
+        return view('backend/pages/categories' , $data);
     }
 
 }
