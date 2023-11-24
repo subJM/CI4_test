@@ -4,14 +4,23 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Libraries\CIAuth;
+use App\Models\Category;
 use App\Models\User;
 use App\Libraries\Hash;
 use App\Models\Setting;
 use App\Models\SocialMedia;
+use SSP;
 
 class AdminController extends BaseController
 {
     protected $helpers =['url', 'form' , 'CIMail', 'CIFunctions'];
+    protected $db;
+
+    public function __construct(){
+        require_once APPPATH.'ThirdParty/ssp.php';
+        $this->db = db_connect();
+    }
+
     public function index()
     {
         $data = [
@@ -348,7 +357,99 @@ class AdminController extends BaseController
         $data = [
             'pageTitle' => 'Categories'
         ];
+
         return view('backend/pages/categories' , $data);
+    }
+
+    public function addCategory(){
+        $request = \Config\Services::request();
+
+        if($request->isAJAX()){
+            $validation = \Config\Services::validation();
+
+            $this->validate([
+                'category_name'=>[
+                    'rules'=>'required|is_unique[categories.name]',
+                    'errors'=>[
+                        'required' => 'Category name is required',
+                        'is_unique' => 'Category name is aleady exists'
+                    ]
+                ]
+            ]);
+
+            if($validation->run()=== FALSE){
+                $errors = $validation->getErrors();
+                return $this->response->setJSON(['status'=>0, 'token'=>csrf_hash(), 'error'=>$errors,'test'=>$request->getVar('category_name')]);
+            }else{
+                $category = new Category;
+                $save = $category->save(['name'=> $request->getVar('category_name')]);
+
+                if($save){
+                    return $this->response->setJSON(['status'=>1, 'token'=>csrf_hash(), 'msg'=>'New Category has been successfully added.']);
+                }else{
+                    return $this->response->setJSON(['status'=>0, 'token'=>csrf_hash(), 'msg'=>'Something went wrong.']);
+                }
+            }
+        }
+
+    }
+
+    public function getCategories(){
+        //DB Details
+        $dbDetails = array(
+            'host'=>$this->db->hostname,
+            'user'=>$this->db->username,
+            'pass'=>$this->db->password,
+            'db'=>$this->db->database,
+        );
+
+        $table = "categories";
+        $primaryKey = "id";
+        $columns = array(
+            array(
+                "db"=>"id",
+                "dt"=>0
+            ),
+            array(
+                "db"=>"name",
+                "dt"=>1,
+            ),
+            array(
+                "db"=>"id",
+                "dt"=>2,
+                "formatter" => function($d, $row){
+                    return "(x) will be added later";
+                }
+            ),
+            array(
+                'db'=>"id",
+                'dt'=>3,
+                'formatter'=>function($d,$row){                    
+                    return "<div class='btn-group'>
+                        <button class='btn btn-sm btn-link p-0 mx-1 editCategoryBtn' data-id='".$row['id']."'>Edit</button>
+                        <button class='btn btn-sm btn-link p-0 mx-1 deleteCategoryBtn' data-id='".$row['id']."'>Delete</button>
+                    </div>";
+                }
+            ),
+            array(
+                'db'=>"ordering",
+                'dt'=>4,
+            ),
+        );
+  
+        return json_encode(
+            SSP::simple($_GET, $dbDetails, $table, $primaryKey, $columns)
+        );
+    }
+
+    public function getCategory(){
+        $request = \Config\Services::request();
+        if($request->isAJAX()){
+            $id = $request->getVar('category_id');
+            $category = new Category();
+            $category_date = $category->find($id);
+            return $this->response->setJSON(['data'=>$category_date]);
+        }
     }
 
 }

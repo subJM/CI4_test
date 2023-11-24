@@ -5,7 +5,7 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'AdminController::index');
+$routes->get('/', 'AuthController::loginform');
 
 $routes->group('admin', static function (RouteCollection $routes) {
 
@@ -23,6 +23,10 @@ $routes->group('admin', static function (RouteCollection $routes) {
     $routes->post('update-blog-favicon','AdminController::updateBlogFavicon', ['as'=> 'update-blog-favicon']);
     $routes->post('update-social-media', 'AdminController::updateSocialMedia' , ['as'=> 'update-social-media']);
     $routes->get('categories', 'AdminController::categories', ['as'=> 'categories']);
+    $routes->post('add-category', 'AdminController::addCategory', ['as' => 'add-category']);
+    $routes->get('get-categories', 'AdminController::getCategories', ['as'=>'get-categories']);
+    $routes->get('get-category', 'AdminController::getCategory', ['as'=>'get-category']);
+    $routes->get('update-category','AdminController::updateCategory',['as'=>'update-category']);
   });
   $routes->group('', ['filter' => 'cifilter:guest'], static function (RouteCollection $routes) {
     // $routes->view('example-auth','example-auth');

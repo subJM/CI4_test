@@ -1,63 +1,47 @@
-
 <!DOCTYPE html>
 <html>
-	<head>
-		<!-- Basic Page Info -->
-		<meta charset="utf-8" />
-		<title><?=isset($pageTitle) ? $pageTitle : 'New Page Title'?></title>
 
-		<!-- Site favicon -->
-		<link
-			rel="apple-touch-icon"
-			sizes="180x180"
-			href="/backend/vendors/images/apple-touch-icon.png"
-		/>
-		<link
-			rel="icon"
-			type="image/png"
-			sizes="32x32"
-			href="/backend/vendors/images/favicon-32x32.png"
-		/>
-		<link
-			rel="icon"
-			type="image/png"
-			sizes="16x16"
-			href="/backend/vendors/images/favicon-16x16.png"
-		/>
+<head>
+	<!-- Basic Page Info -->
+	<meta charset="utf-8" />
+	<title>
+		<?= isset($pageTitle) ? $pageTitle : 'New Page Title' ?>
+	</title>
 
-		<!-- Mobile Specific Metas -->
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1, maximum-scale=1"
-		/>
+	<!-- Site favicon -->
+	<link rel="apple-touch-icon" sizes="180x180" href="/backend/vendors/images/apple-touch-icon.png" />
+	<link rel="icon" type="image/png" sizes="32x32" href="/backend/vendors/images/favicon-32x32.png" />
+	<link rel="icon" type="image/png" sizes="16x16" href="/backend/vendors/images/favicon-16x16.png" />
 
-		<!-- Google Font -->
-		<link
-			href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-			rel="stylesheet"
-		/>
-		<!-- CSS -->
-		<link rel="stylesheet" type="text/css" href="/backend/vendors/styles/core.css" />
-		<link
-			rel="stylesheet"
-			type="text/css"
-			href="/backend/vendors/styles/icon-font.min.css"
-		/>
-		<link rel="stylesheet" type="text/css" href="/backend/vendors/styles/style.css" />
-		
+	<!-- Mobile Specific Metas -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<!-- Google Font -->
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+		rel="stylesheet" />
+	<!-- CSS -->
+	<link rel="stylesheet" type="text/css" href="/backend/vendors/styles/core.css" />
+	<link rel="stylesheet" type="text/css" href="/backend/vendors/styles/icon-font.min.css" />
+	<link rel="stylesheet" type="text/css" href="/backend/vendors/styles/style.css" />
 
-    <!-- 추가 -->
-    <link rel="stylesheet" href="/extra-assets/ijaboCropTool/ijaboCropTool.min.css">
-	<?=$this->renderSection('stylesheets')?>
-	
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
+		integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
+		integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
+		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+	<!-- 추가 -->
+	<link rel="stylesheet" href="/extra-assets/ijaboCropTool/ijaboCropTool.min.css">
+	<?= $this->renderSection('stylesheets') ?>
+
 	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-	</head>
-	<body>
-		<!-- 로딩창 -->
-		<!-- <div class="pre-loader">
+</head>
+
+<body>
+	<!-- 로딩창 -->
+	<!-- <div class="pre-loader">
 			<div class="pre-loader-box">
 				<div class="loader-logo">
 					<img src="/backend/vendors/images/deskapp-logo.svg" alt="" />
@@ -70,18 +54,18 @@
 			</div>
 		</div> -->
 
-		<?php include 'inc/header.php'?>
+	<?php include 'inc/header.php' ?>
 
-		<?php include 'inc/right-sidebar.php';?>
+	<?php include 'inc/right-sidebar.php'; ?>
 
-		<?php include 'inc/left-sidebar.php';?>
+	<?php include 'inc/left-sidebar.php'; ?>
 
-		<div class="mobile-menu-overlay"></div>
+	<div class="mobile-menu-overlay"></div>
 
-		<div class="main-container">
-			<div class="pd-ltr-20 xs-pd-20-10">
-				<div class="min-height-200px">
-					<!-- <div class="page-header">
+	<div class="main-container">
+		<div class="pd-ltr-20 xs-pd-20-10">
+			<div class="min-height-200px">
+				<!-- <div class="page-header">
 						<div class="row">
 							<div class="col-md-6 col-sm-12">
 								<div class="title">
@@ -117,14 +101,14 @@
 							</div>
 						</div>
 					</div> -->
-					<!-- <div class="pd-20 bg-white border-radius-4 box-shadow mb-30"></div> -->
-					<div> <?=$this->renderSection('content');?></div>
-				</div>
-				<?php include 'inc/footer.php'?>
+				<!-- <div class="pd-20 bg-white border-radius-4 box-shadow mb-30"></div> -->
+				<div> <?= $this->renderSection('content'); ?></div>
 			</div>
+			<?php include 'inc/footer.php' ?>
 		</div>
-		<!-- welcome modal start -->
-		<!-- <div class="welcome-modal">
+	</div>
+	<!-- welcome modal start -->
+	<!-- <div class="welcome-modal">
 			<button class="welcome-modal-close">
 				<i class="bi bi-x-lg"></i>
 			</button>
@@ -196,16 +180,18 @@
 		<button class="welcome-modal-btn">
 			<i class="fa fa-download"></i> Download
 		</button> -->
-		<!-- welcome modal end -->
-		<!-- js -->
-		<script src="/backend/vendors/scripts/core.js"></script>
-		<script src="/backend/vendors/scripts/script.min.js"></script>
-		<script src="/backend/vendors/scripts/process.js"></script>
-		<script src="/backend/vendors/scripts/layout-settings.js"></script>
-		<script src="/extra-assets/ijaboCropTool/ijaboCropTool.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-		<!-- Google Tag Manager (noscript) -->
-		<!-- <noscript
+	<!-- welcome modal end -->
+	<!-- js -->
+	<script src="/backend/vendors/scripts/core.js"></script>
+	<script src="/backend/vendors/scripts/script.min.js"></script>
+	<script src="/backend/vendors/scripts/process.js"></script>
+	<script src="/backend/vendors/scripts/layout-settings.js"></script>
+	<script src="/extra-assets/ijaboCropTool/ijaboCropTool.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
+		integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
+		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<!-- Google Tag Manager (noscript) -->
+	<!-- <noscript
 			><iframe
 				src="https://www.googletagmanager.com/ns.html?id=GTM-NXZMQSS"
 				height="0"
@@ -213,9 +199,10 @@
 				style="display: none; visibility: hidden"
 			></iframe
 		></noscript> -->
-		<!-- End Google Tag Manager (noscript) -->
-	
-		<?=$this->renderSection('scripts');?>
+	<!-- End Google Tag Manager (noscript) -->
 
-	</body>
+	<?= $this->renderSection('scripts'); ?>
+
+</body>
+
 </html>

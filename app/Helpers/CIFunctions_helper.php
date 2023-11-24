@@ -65,3 +65,17 @@ if(!function_exists('get_social_media') ){
         return $result;
     }
 }
+if(!function_exists('fn_log')){
+    function fn_log($msg,$title=''){
+
+        if(is_array($msg)){
+            $msg=json_encode($msg);
+        }
+
+        if(!empty($title)){
+            log_message('debug', '<====================== '.$title.' ======================>');
+        }
+        log_message('debug',$msg);
+    }
+
+}
