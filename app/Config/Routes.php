@@ -26,7 +26,9 @@ $routes->group('admin', static function (RouteCollection $routes) {
     $routes->post('add-category', 'AdminController::addCategory', ['as' => 'add-category']);
     $routes->get('get-categories', 'AdminController::getCategories', ['as'=>'get-categories']);
     $routes->get('get-category', 'AdminController::getCategory', ['as'=>'get-category']);
-    $routes->get('update-category','AdminController::updateCategory',['as'=>'update-category']);
+    $routes->post('update-category','AdminController::updateCategory',['as'=>'update-category']);
+    $routes->get('delete-category', 'AdminController::deleteCategory' , ['as' => 'delete-category']);
+    $routes->get('reorder-categories', 'AdminController::reorderCategories', ['as'=>'reorder-categories']);
   });
   $routes->group('', ['filter' => 'cifilter:guest'], static function (RouteCollection $routes) {
     // $routes->view('example-auth','example-auth');

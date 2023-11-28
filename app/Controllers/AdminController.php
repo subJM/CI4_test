@@ -9,6 +9,8 @@ use App\Models\User;
 use App\Libraries\Hash;
 use App\Models\Setting;
 use App\Models\SocialMedia;
+
+//데이타 테이블 만들기(써드파티)
 use SSP;
 
 class AdminController extends BaseController
@@ -395,6 +397,7 @@ class AdminController extends BaseController
     }
 
     public function getCategories(){
+
         //DB Details
         $dbDetails = array(
             'host'=>$this->db->hostname,
@@ -402,7 +405,6 @@ class AdminController extends BaseController
             'pass'=>$this->db->password,
             'db'=>$this->db->database,
         );
-
         $table = "categories";
         $primaryKey = "id";
         $columns = array(
@@ -436,7 +438,6 @@ class AdminController extends BaseController
                 'dt'=>4,
             ),
         );
-  
         return json_encode(
             SSP::simple($_GET, $dbDetails, $table, $primaryKey, $columns)
         );
@@ -451,5 +452,87 @@ class AdminController extends BaseController
             return $this->response->setJSON(['data'=>$category_date]);
         }
     }
+
+    public function updateCategory(){
+        $request = \Config\Services::request();
+        
+        if($request->isAJAX()){
+            $id = $request->getVar('category_id');
+            $validation = \Config\Services::validation();
+
+            $this->validate([
+                'category_name'=>[
+                    'rules'=> 'required|is_unique[categories.name, id,'.$id.']',
+                    'errors'=>[
+                        'required'=>'Category name is required',
+                        'is_unique'=>'Category name is alredy exists'
+                    ]
+                ]
+            ]);
+
+            if($validation->run() ===false){
+                $errors = $validation->getErrors();
+                return $this->response->setJSON(['status'=>0, 'token'=>csrf_hash(), 'error'=> $errors]);
+            }else{
+                // return $this->response->setJSON(['status'=>1, 'token'=>csrf_hash(), 'msg'=>'validated...']);
+                $category = new Category();
+                $update = $category->where('id', $id)->set([
+                    'name'=>$request->getVar('category_name'),
+                ])->update();
+
+                if($update){
+                    return $this->response->setJSON(['status'=>1 , 'token'=>csrf_hash(), 'msg'=>'Category has been successfully update.']);
+                }else{
+                    return $this->response->setJSON(['status'=>0 , 'token'=>csrf_hash(), 'msg'=>'Something went wrong.']);
+                }
+
+            }
+
+        }
+    }
+
+
+    public function deleteCategory(){
+        $request = \Config\Services::request();
+        
+        if($request->isAJAX()){
+            $category_id = $request->getVar('category_id');
+            $category = new Category();
+
+            //Check it`s related sub categories: in future vide0
+    
+            //Check it`s related prests through it`s subcategories: in future video
+    
+            //Delete category
+            // $delete = $category->where('id',$category_id)->delete();
+            $delete = $category->delete($category_id);
+            
+            if($delete){
+                return $this->response->setJSON(['status'=>1 , 'token'=> csrf_hash(), 'msg'=>'Category has been successfully delete.']);
+            }else{
+                return $this->response->setJSON(['status'=>0 , 'token'=> csrf_hash(), 'msg'=>'Something went wrong.']);
+            }
+        }
+    }
+
+
+    public function reorderCategories(){
+        $request = \Config\Services::request();
+
+        if($request->isAJAX()){
+            $positions = $request->getVar('positions');
+            $category = new Category();
+
+            foreach($positions as $position){
+                $index = $position[0];
+                $newPosition = $position[1];
+                $category->where('id',$index)
+                ->set(['ordering'=> $newPosition])
+                ->update();
+            }
+            return $this->response->setJSON(['status'=>1, 'msg'=>'Category ordering has been successfully updated.']);
+        }
+    }
+
 
 }

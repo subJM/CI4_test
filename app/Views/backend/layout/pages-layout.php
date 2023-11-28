@@ -25,18 +25,29 @@
 	<link rel="stylesheet" type="text/css" href="/backend/vendors/styles/style.css" />
 
 
+	
+	<!-- 추가 -->
+	<!-- 알럿메시지창 -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
 		integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
 		crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
 		integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
 		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-	<!-- 추가 -->
+	<!-- 이미지 범위 지정 -->
 	<link rel="stylesheet" href="/extra-assets/ijaboCropTool/ijaboCropTool.min.css">
+	<!-- 메시지창 -->
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<style>
+		.swal2-popup{
+			font-size: .87em;
+		}
+	</style>
+	
 	<?= $this->renderSection('stylesheets') ?>
 
-	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+	<!-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> -->
+	<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 </head>
 
 <body>

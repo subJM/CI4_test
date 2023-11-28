@@ -101,12 +101,16 @@
 <?= $this->section('stylesheets')?>
     <link rel="stylesheet" href="/backend/src/plugins/datatables/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="/backend/src/plugins/datatables/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="/extra-assets/jquery-ui-1.13.2/jquery-ui.min.css">
+    <link rel="stylesheet" href="/extra-assets/jquery-ui-1.13.2/jquery-ui.structure.min.css">
+    <link rel="stylesheet" href="/extra-assets/jquery-ui-1.13.2/jquery-ui.theme.min.css">
 <?= $this->endSection()?>
 <?= $this->section('scripts')?>
 <script src="/backend/src/plugins/datatables/js/jquery.dataTables.min.js"></script>
 <script src="/backend/src/plugins/datatables/js/dataTables.bootstrap4.min.js"></script>
 <script src="/backend/src/plugins/datatables/js/dataTables.responsive.min.js"></script>
 <script src="/backend/src/plugins/datatables/js/responsive.bootstrap4.min.js"></script>
+<script src="/extra-assets/jquery-ui-1.13.2/jquery-ui.min.js"></script>
 
 <script>
     $(document).on('click', '#add_category_btn',function(e){
@@ -148,6 +152,7 @@
                         if(res.status ==1){
                             $(form)[0].reset();
                             modal.modal('hide');
+                            categories_DT.ajax.reload(null,false);
                             toastr.success(res.msg);
                         }else{
                             toastr.error(res.msg);
@@ -165,19 +170,21 @@
     })
     //Retrieve categories
     var categories_DT = $('#categories-table').DataTable({
-        processing:true,
-        serverSide:true,
-        ajax:"<?= route_to('get-categories') ?>",
-        dom:"Brtip",
-        info:true,
-        fnCreateRow:function(row,data,index){
+        processing: true,
+        serverSide: true,
+        ajax: "<?= route_to('get-categories') ?>",
+        dom: "Brtip",
+        info: true,
+        fnCreatedRow: function(row,data,index){
             $('td',row).eq(0).html(index+1);
+            // console.log(data);
+            $('td', row).parent().attr('data-index',data[0]).attr('data-ordering', data[4]);
         },
         columnDefs:[
             { orderable:false, targets:[0,1,2,3]},
             { visible:false, targets:4},
         ],
-        order:[[4,'asc']]
+        order:[[4,'aes']]
     });
 
     $(document).on('click', '.editCategoryBtn' , function(e){
@@ -203,18 +210,98 @@
         var csrfName = $('.ci_csrf_data').attr('name');
         var csrfHash = $('.cicsrf_data').val();
         var form = this;
+        var modal = $('body').find('div#edit-category-modal');
         var formdata = new FormData(form);
             form.append(csrfName,csrfHash);
         
         $.ajax({
             url:$(form).attr('action'),
-            method:$(form).attr('method');
+            method:$(form).attr('method'),
             data:formdata,
             processData: false,
             dataType: 'json',
+            contentType:false,
+            cache: false,
+            beforeSend: function(){
+                toastr.remove();
+                $(form).find('span.error-text').text('');
+            },
+            success: function(res){
+                //Update CSRF Hash
+                $('.ci_csrf_hash').val(res.token);
+
+                if($.isEmptyObject(res.error)){
+                    if(res.status == 1){
+                        modal.modal('hide');
+                        toastr.success(res.msg);
+                        categories_DT.ajax.reload(null, false); //update datatable
+                    }else{
+                        toastr.error(res.msg);
+                    }
+                }else{
+                    $.each(res.error, function(prefix,val){
+                        $form.find('span.'+prefix+'_error').text(val);
+                    })
+                }
+
+            }
+
         });
 
     })
+
+    $(document).on('click', '.deleteCategoryBtn', function(e){
+        e.preventDefault();
+        var category_id = $(this).data('id');
+        var url = "<?= route_to('delete-category') ?>";
+        swal.fire({
+            title: 'ara you sure?',
+            html: 'You want to delete this category',
+            showCloseButten: true,
+            showCancelButton:true,
+            cancelButtonText:'Cancel',
+            confirmButtonText:'Yes, Delect',
+            cancelButtonColor: '#d33',
+            confirmButtonColor: '#3085d6',
+            width:300,
+            allowOutsideClick:false
+        }).then(function(result){
+            if(result.value){
+                $.get(url,{category_id: category_id},function(res){
+                    if(res.status ==1){
+                        categories_DT.ajax.reload(null,false);
+                        toastr.success(res.msg);
+                    }else{
+                        toastr.error(res.msg);
+                    }
+                },'json');
+            }
+        });
+    });
+
+    $('table#categories-table').find('tbody').sortable({
+        update: function(event, ui){
+            $(this).children().each(function(index){
+                if($(this).attr('data-ordering') != (index+1)){
+                    $(this).attr('data-ordering', (index+1)).addClass('updated');
+                }
+            });
+            var positions = [];
+
+            $('.updated').each(function(){
+                positions.push([$(this).data('index'), $(this).data('ordering')]); 
+                $(this).removeClass('updated');
+            });
+
+            var url = "<?= route_to('reorder-categories') ?>";
+            $.get(url, {positions:positions}, function(res){
+                if(res.status == 1){
+                    categories_DT.ajax.reload(null, false);
+                    toastr.success(res.msg);
+                }
+            },'json');
+        }
+    });
 
 </script>
 <?= $this->endSection()?>
