@@ -66,16 +66,19 @@ if(!function_exists('get_social_media') ){
     }
 }
 if(!function_exists('fn_log')){
-    function fn_log($msg,$title=''){
-
-        if(is_array($msg)){
-            $msg=json_encode($msg);
+    function fn_log($msg, $title=''){
+        if($msg == null){
+            $msgString = '값이 없습니다.';
+        }else if(is_array($msg)){
+            $msgString =  json_encode($msg);
         }
+
 
         if(!empty($title)){
-            log_message('debug', '<====================== '.$title.' ======================>');
+            log_message('debug' , '<====================== '.$title.' ======================>');
         }
-        log_message('debug',$msg);
+        log_message('debug', $msgString);
+        
     }
 
 }

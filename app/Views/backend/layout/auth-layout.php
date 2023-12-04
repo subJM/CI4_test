@@ -85,7 +85,7 @@
 				class="container-fluid d-flex justify-content-between align-items-center"
 			>
 				<div class="brand-logo">
-					<a href="login.html">
+					<a href="<?= route_to('admin.login.form') ?>">
 						<img src="/backend/vendors/images/deskapp-logo.svg" alt="" />
 					</a>
 				</div>

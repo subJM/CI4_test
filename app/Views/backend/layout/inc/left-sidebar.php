@@ -26,8 +26,8 @@
 						<span class="micon dw dw-newspaper"></span><span class="mtext">posts</span>
 					</a>
 					<ul class="submenu">
-						<li><a href="basic-table.html">All poists</a></li>
-						<li><a href="datatable.html">Add new</a></li>
+						<li><a href="<?= route_to('all-posts') ?>">All poists</a></li>
+						<li><a href="<?= route_to('new-post') ?>">Add new</a></li>
 					</ul>
 				</li>
 

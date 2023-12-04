@@ -3,38 +3,27 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use \Mberecall\Sluggable\CI_Slugify;
 
 class SubCategory extends Model
 {
-    protected $table            = 'subcategories';
+    protected $table            = 'sub_categories';
     protected $primaryKey       = 'id';
-    protected $useAutoIncrement = true;
-    protected $returnType       = 'array';
-    protected $useSoftDeletes   = false;
-    protected $protectFields    = true;
-    protected $allowedFields    = [];
-
-    // Dates
-    protected $useTimestamps = false;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_at';
-    protected $updatedField  = 'updated_at';
-    protected $deletedField  = 'deleted_at';
-
-    // Validation
-    protected $validationRules      = [];
-    protected $validationMessages   = [];
-    protected $skipValidation       = false;
-    protected $cleanValidationRules = true;
+    protected $allowedFields    = [
+        'name','slug','parent_cat', 'description','ordering'
+    ];
 
     // Callbacks
-    protected $allowCallbacks = true;
-    protected $beforeInsert   = [];
-    protected $afterInsert    = [];
-    protected $beforeUpdate   = [];
-    protected $afterUpdate    = [];
-    protected $beforeFind     = [];
-    protected $afterFind      = [];
-    protected $beforeDelete   = [];
-    protected $afterDelete    = [];
+    protected $beforeInsert = ['setSlug'];
+    protected $beforeUpdate = ['setSlug'];
+
+    
+    public function setSlug($data)
+    {
+       $slugify = new CI_Slugify($this);
+       // $slugify->field('slug_field'); // default: `slug`
+       $data = $slugify->getSlug($data,'name');
+       return $data;
+   }
+
 }

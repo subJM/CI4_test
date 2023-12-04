@@ -29,6 +29,21 @@ $routes->group('admin', static function (RouteCollection $routes) {
     $routes->post('update-category','AdminController::updateCategory',['as'=>'update-category']);
     $routes->get('delete-category', 'AdminController::deleteCategory' , ['as' => 'delete-category']);
     $routes->get('reorder-categories', 'AdminController::reorderCategories', ['as'=>'reorder-categories']);
+    $routes->get('get-parent-categories', 'AdminController::getParentCategories', ['as'=> 'get-parent-categories']);
+    $routes->post('add-subcategory', 'AdminController::addSubCategory' ,[ 'as' => 'add-subcategory']);
+    $routes->get('get-subcategories', 'AdminController::getSubCategories', ['as'=>'get-subcategories']);
+    $routes->get('get-subcategory', 'AdminController::getSubCategory', ['as'=>'get-subcategory']);
+    $routes->post('update-subcategory', 'AdminController::updateSubCategory' , ['as'=>'update-subcategory']);
+    $routes->get('reorder-subcategories', 'AdminController::reorderSubCategories', ['as'=>'reorder-subcategories']);
+    $routes->get('delete-subcategory', 'AdminController::deleteSubCategory', ['as'=> 'delete-subcategory']);
+
+    $routes->group('posts', static function($routes){
+      $routes->get('new-post', 'AdminController::addPost', ['as'=>'new-post']);
+      $routes->post('create-post', 'AdminController::createPost', ['as'=>'create-post']);
+      $routes->get('all-posts', 'AdminController::allPosts', ['as'=>'all-posts']);
+      $routes->get('get-posts','AdminController::getPosts' , ['as'=>'get-posts']);
+      $routes->get('edit-post/(:any)' , 'AdminController::editPost/$1', ['as'=> 'edit-post']);
+    });
   });
   $routes->group('', ['filter' => 'cifilter:guest'], static function (RouteCollection $routes) {
     // $routes->view('example-auth','example-auth');
