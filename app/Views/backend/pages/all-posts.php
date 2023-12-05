@@ -83,5 +83,35 @@
             { orderable:false, targets:[0,1,2,3,4] }
         ]
     });
+    $(document).on('click', '.deletePostBtn', function(e){
+        e.preventDefault();
+        var post_id = $(this).data('id');
+        var url = "<?= route_to('delete-post') ?>";
+        swal.fire({
+            title:'Are you sure?',
+            html:'you want to delete this post',
+            showCloseButton: true,
+            showCancelButton: true,
+            cancelButtonText: 'Cancel',
+            confirmButtonText:'Yes, Delete',
+            cancelButtonColor:'#d33',
+            confirmButtonColor: '#3085d6',
+            width:300,
+            allowOutsideClick:false,
+        }).then(function(result){
+            if(result.value){
+                $.getJSON(url,{post_id:post_id}, function(res){
+                    if(res.status ==1 ){
+                        posts_DT.ajax.reload(null,false);
+                        toastr.success(res.msg);
+                    }else{
+                        toastr.error(res.msg);
+                    }
+                });
+            }
+        })
+    });
+
+
 </script>
 <?= $this->endSection() ?>
