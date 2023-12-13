@@ -1,5 +1,6 @@
 <?= $this->extend('backend/layout/pages-layout'); ?>
 <?= $this->section('content') ?>
+<?php use App\Libraries\CIAuth;?>
 <div class="page-header">
     <div class="row">
         <div class="col-md-6 col-sm-12">
@@ -36,7 +37,7 @@
                     </div>
                     <div class="form-group">
                         <label for=""><b>Content</b></label>
-                        <textarea name="content" id="" cols="30" rows="10" class="form-control" placeholder="Type..."></textarea>
+                        <textarea name="content" id="content" cols="30" rows="10" class="form-control" placeholder="Type..."></textarea>
                         <span class="text-danger error-text content_error"></span>
                     </div>
                 </div>
@@ -108,10 +109,11 @@
 <?= $this->endSection() ?>
 <?= $this->section('scripts') ?>
 <script src="/backend/src/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js"></script>
+<script src="/extra-assets/ckeditor/ckeditor.js"></script>
 <script>
     // $('input#tags').on('change',function(){
     //     var tags=$('input#tags').val();
-    //     var changeTags =tags.replace(',' , '\n,' );
+    //     var changeTags =tags.replace(',' , '/n,' );
     //     $('input#tags').val(changeTags);
     // });
     // $('input[type="file"][name="featured_image"]').ijaboViewer({
@@ -125,6 +127,15 @@
     //         alert(msg);
     //     }
     // });
+    $(function(){
+        var elfinderPath = '/extra-assets/elFinder/elfinder.src.php?integration=ckeditor&uid=<?= CIAuth::id() ?>';
+
+        CKEDITOR.replace('content',{
+            filebrowserBrowseURL:elfinderPath,
+            filebrowserImageBrowseUrl:elfinderPath+'&type=image',
+            removeDialogTabs: 'link:upload;image:upload'
+        });
+    });
 
     $(document).ready(function () {
         // 파일 입력란 변경 시
@@ -162,8 +173,10 @@
         var csrfHash = $('.ci_csrf_data').val();
         
         var form = this;
+        var content = CKEDITOR.instances.content.getData();
         var formdata = new FormData(form);
             formdata.append(csrfName,csrfHash);
+            formdata.append('content',content);
         
         $.ajax({
             url: $(form).attr('action'),
@@ -184,6 +197,7 @@
                     console.log(res);
                     if(res.status ==1 ){
                         $(form)[0].reset();
+                        CKEDITOR.instances.content.setData('');
                         $('img#image-previewer').attr('src','');
                         $('input[name="tags"]').tagsinput('removeAll');
                         toastr.success(res.msg);

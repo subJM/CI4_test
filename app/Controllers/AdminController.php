@@ -1023,17 +1023,15 @@ class AdminController extends BaseController
 
                     //Upload featured image
                     if($file->move($path, $filename) ){
-
-                        
                         //Delete old images
                         if($old_post_featured_image != null && file_exists($path.$old_post_featured_image)){
                             unlink($path.$old_post_featured_image);
                         }
                         if(file_exists($path.'thumb_'.$old_post_featured_image)){
-                            unlink($path.'thumb_'.$filename);
+                            unlink($path.'thumb_'.$old_post_featured_image);
                         }
                         if(file_exists($path.'resized_'.$old_post_featured_image)){
-                            unlink($path.'resized_'.$filename);
+                            unlink($path.'resized_'.$old_post_featured_image);
                         }
 
                         
