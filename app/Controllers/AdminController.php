@@ -512,12 +512,25 @@ class AdminController extends BaseController
     
             //Delete category
             // $delete = $category->where('id',$category_id)->delete();
-            $delete = $category->delete($category_id);
+            // $delete = $category->delete($category_id);
             
-            if($delete){
-                return $this->response->setJSON(['status'=>1 , 'token'=> csrf_hash(), 'msg'=>'Category has been successfully delete.']);
+            // if($delete){
+            //     return $this->response->setJSON(['status'=>1 , 'token'=> csrf_hash(), 'msg'=>'Category has been successfully delete.']);
+            // }else{
+            //     return $this->response->setJSON(['status'=>0 , 'token'=> csrf_hash(), 'msg'=>'Something went wrong.']);
+            // }
+            $subcategory = new SubCategory();
+            $subcategories = $subcategory->where('parent_cat',$category_id)->findAll();
+            if($subcategories){
+                $msg = count($subcategories)==1 ? 'There is ('.count($subcategories).') Sub category related to this parent category, so that it cant not be deleted.' : 'There are ('.count($subcategories).') Sub categories related to this parent category, so that it can not be deleted';
+                return $this->response->setJSON(['status'=> 0 , 'msg'=> $msg]);
             }else{
-                return $this->response->setJSON(['status'=>0 , 'token'=> csrf_hash(), 'msg'=>'Something went wrong.']);
+                $delete = $category->delete($category_id);
+                if($delete){
+                    return $this->response->setJSON(['status'=>1 , 'token'=> csrf_hash(), 'msg'=>'Category has been successfully delete.']);
+                }else{
+                    return $this->response->setJSON(['status'=>0 , 'token'=> csrf_hash(), 'msg'=>'Something went wrong.']);
+                }
             }
         }
     }
@@ -647,7 +660,10 @@ class AdminController extends BaseController
                 "db"=>"id",
                 "dt"=>3,
                 "formatter"=>function($d, $row){
-                    return "(x) will be added later";
+                    // return "(x) will be added later";
+                    $post = new Post();
+                    $posts = $post->where(['category_id'=> $row['id']])->findAll();
+                    return count($posts);
                 }
             ),
             array(
@@ -751,15 +767,29 @@ class AdminController extends BaseController
             //Check related posts
 
             //Delete sub category
+            // $delete = $subcategory->delete($subcategory_id);
 
-            $delete = $subcategory->delete($subcategory_id);
-
-            if($delete){
-                return $this->response->setJSON(['status'=>1 , 'msg'=>'Sub category has been successfully delete.']);
+            // if($delete){
+            //     return $this->response->setJSON(['status'=>1 , 'msg'=>'Sub category has been successfully delete.']);
+            // }else{
+            //     return $this->response->setJSON(['status'=>0 , 'msg'=>'Something went wrong.']);
+            // }
+            
+            $post = new Post();
+            $posts = $post->where('category_id', $subcategory_id)->findAll();
+            $msg = '';
+            if($posts){
+                $msg = count($posts) == 1 ? 'There is ('.count($posts).') Post related to this sub category. so that, it can not be deleted.' : 'There are ('.count($posts).') Posts related to this sub category. So that, it can not be deleted.';
+                return $this->response->setJSON(['status'=>0 , 'msg'=>$msg]);
             }else{
-                return $this->response->setJSON(['status'=>0 , 'msg'=>'Something went wrong.']);
+                //Delete sub category
+                $delete = $subcategory->delete($subcategory_id);
+                if($delete){
+                    return $this->response->setJSON(['status'=>1 , 'msg'=>'Sub category has been successfully deleted.']);
+                }else{
+                    return $this->response->setJSON(['status'=>0 , 'msg'=>'Something went wrong.']);
+                }
             }
-
         }
     }
 

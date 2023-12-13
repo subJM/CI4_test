@@ -76,3 +76,10 @@ if(!function_exists('fn_log')){
     }
 
 }
+if(!function_exists('current_route_name')){
+    function current_route_name(){
+        $router = \CodeIgniter\Config\Services::router();
+        $route_name = $router->getMatchedRouteOptions()['as'];
+        return $route_name;
+    }
+}

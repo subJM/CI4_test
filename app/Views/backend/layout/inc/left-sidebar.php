@@ -12,22 +12,22 @@
 		<div class="sidebar-menu">
 			<ul id="accordion-menu">
 				<li>
-					<a href="<?= route_to('admin.home'); ?>" class="dropdown-toggle no-arrow">
+					<a href="<?= route_to('admin.home'); ?>" class="dropdown-toggle no-arrow <?= current_route_name() == 'admin.home' ? 'active' : '' ?>">
 						<span class="micon dw dw-home"></span><span class="mtext">Home</span>
 					</a>
 				</li>
 				<li>
-					<a href="<?= route_to('categories') ?>" class="dropdown-toggle no-arrow">
+					<a href="<?= route_to('categories') ?>" class="dropdown-toggle no-arrow <?= current_route_name() == 'categories' ? 'active' : '' ?>">
 						<span class="micon dw dw-list"></span><span class="mtext">Categories</span>
 					</a>
 				</li>
-				<li class="dropdown">
-					<a href="javascript:;" class="dropdown-toggle">
+				<li class="dropdown posts-menu">
+					<a href="javascript:;" class="dropdown-toggle <?= current_route_name() == 'all-posts' || current_route_name() == 'new-post' ? 'active' : '' ?>">
 						<span class="micon dw dw-newspaper"></span><span class="mtext">posts</span>
 					</a>
 					<ul class="submenu">
-						<li><a href="<?= route_to('all-posts') ?>">All poists</a></li>
-						<li><a href="<?= route_to('new-post') ?>">Add new</a></li>
+						<li><a href="<?= route_to('all-posts') ?>" class="<?= current_route_name() == 'all-posts' ? 'active' : '' ?>">All poists</a></li>
+						<li><a href="<?= route_to('new-post') ?>" class="<?= current_route_name() == 'new-post' ? 'active' : '' ?>" >Add new</a></li>
 					</ul>
 				</li>
 
@@ -39,7 +39,7 @@
 				</li>
 
 				<li>
-					<a href="<?= route_to('admin.profile') ?>" class="dropdown-toggle no-arrow">
+					<a href="<?= route_to('admin.profile') ?>" class="dropdown-toggle no-arrow <?= current_route_name() == 'admin.profile' ? 'active' : '' ?>">
 						<span class="micon dw dw-user"></span>
 						<span class="mtext">
 							Profile
@@ -48,7 +48,7 @@
 					</a>
 				</li>
 				<li>
-					<a href="<?= route_to('settings') ?>" class="dropdown-toggle no-arrow">
+					<a href="<?= route_to('settings') ?>" class="dropdown-toggle no-arrow <?= current_route_name() == 'settings' ? 'active' : '' ?>">
 						<span class="micon dw dw-settings"></span>
 						<span class="mtext">
 							settings
