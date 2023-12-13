@@ -129,3 +129,4 @@ nb-configuration.xml
 
 #유저 이미지 사진 보관안함
 /public/images/*
+/public/files/media1_files/*
